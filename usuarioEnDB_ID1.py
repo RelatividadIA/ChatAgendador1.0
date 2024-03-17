@@ -20,6 +20,7 @@ def determinarBoolRespuestaDelUsuario(respuesta):
     
     if (completion.choices[0].message.content == "False"):
         idActual.global_id = 2
+    
     return completion.choices[0].message.content
 
 

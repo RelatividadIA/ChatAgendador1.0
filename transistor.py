@@ -15,11 +15,11 @@ grafoChats = {1:getGrafoChatID1(), 2:getGrafoChatID2()}
 chatActual = grafoChats[1]
 idActual.global_id = 1
 
-def traspaso(lista_de_mensajes):
-    print(lista_de_mensajes)
+def traspaso():
+
     print(f"Paso a {idActual.global_id}")
     chatActual = grafoChats[idActual.global_id]
-    chatActual.update_lista_de_mensajes(lista_de_mensajes)
+    chatActual.update_lista_de_mensajes()
     #print(lista_de_mensajes)
     #print(f"Traspaso a chat {idActual.global_id}")
 
@@ -73,7 +73,7 @@ async def chat_with_gpt_extract_name(input_data: ChatInput, api_key: str = Depen
     formatted_messages = [{"role": msg.role, "content": msg.content} for msg in input_data.messages]
     idActual.global_msgs = formatted_messages
     #print(formatted_messages)
-    traspaso(formatted_messages)
+    traspaso()
     return {"response": chatActual.run_conversation()}
 
 

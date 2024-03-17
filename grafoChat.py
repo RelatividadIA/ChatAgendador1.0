@@ -14,8 +14,8 @@ class grafoChat:
         grafoChats[id] = self
         
 
-    def update_lista_de_mensajes(self, lista_de_mensajes):
-        print(lista_de_mensajes)
+    def update_lista_de_mensajes(self):
+        lista_de_mensajes = idActual.global_msgs
         lista_de_mensajes_filtrada = []
 
         validRoles = ["system", "user", "assistant"]
@@ -38,7 +38,7 @@ class grafoChat:
     # Step 1: send the conversation and available functions to the model
         if idActual.global_id != self.id:
             print(f"DISONANCIA entre {idActual.global_id} y {self.id}")
-            grafoChats[idActual.global_id].update_lista_de_mensajes(idActual.global_msgs)
+            grafoChats[idActual.global_id].update_lista_de_mensajes()
             return grafoChats[idActual.global_id].run_conversation()
         
         else:
@@ -46,6 +46,7 @@ class grafoChat:
             
             print(f"En el BOT {self.id}")
             
+            self.update_lista_de_mensajes()
             messages = self.lista_de_mensajes
             #print(messages)
             tools = self.lista_de_tools
@@ -86,7 +87,10 @@ class grafoChat:
                     model="gpt-3.5-turbo-0125",
                     messages=messages,
                 )  # get a new response from the model where it can see the function response
-                return second_response.choices[0].message.content #+ " acabo de anotar tu " + primer_parametro +  " en una variable: " + function_response
+                if idActual.global_id != self.id:
+                    return grafoChats[idActual.global_id].run_conversation()    
+                else:    
+                    return second_response.choices[0].message.content #+ " acabo de anotar tu " + primer_parametro +  " en una variable: " + function_response
             return response_message.content
 
 
