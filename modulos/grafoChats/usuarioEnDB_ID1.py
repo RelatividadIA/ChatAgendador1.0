@@ -1,11 +1,11 @@
-import idActual
+import modulos.idActual as idActual
 import openai
 
-from grafoChat import *
+from modulos.grafoChats.grafoChat import *
 
 def determinarBoolRespuestaDelUsuario(respuesta):
     """Extrae el mensaje del usuario y determina su carácter booleano."""
-    
+    #Simplificar esto, un solo llamado a la función y no subchats
     client = OpenAI()  # Use your OpenAI API key
     
 

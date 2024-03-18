@@ -1,6 +1,6 @@
 from openai import OpenAI
 import json
-import idActual
+import modulos.idActual as idActual
 
 grafoChats = {}
 class grafoChat:

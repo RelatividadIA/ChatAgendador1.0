@@ -1,7 +1,8 @@
-import idActual
+import modulos.idActual as idActual
 
-from usuarioEnDB_ID1 import getGrafoChatID1
-from extraerCelular_ID2 import getGrafoChatID2
+from modulos.grafoChats.usuarioEnDB_ID1 import getGrafoChatID1
+from modulos.grafoChats.extraerCelular_ID2 import getGrafoChatID2
+
 
 from fastapi import FastAPI, HTTPException, Depends, Body
 from pydantic import BaseModel
