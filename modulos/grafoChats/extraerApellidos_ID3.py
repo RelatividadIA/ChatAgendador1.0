@@ -8,8 +8,8 @@ def extraerApellidos(apellidos):
     if controller.verificarExistencia(json.dumps({"apellidos": apellidos})):
         pass
     else:
-        print("No en la base de datos")
-        #idActual.global_id = 3
+        print("No está en la base de datos")
+        idActual.global_id = 4
     
 
     return json.dumps({"apellidos": apellidos})
@@ -21,25 +21,30 @@ def getGrafoChatID3():
             "type": "function",
             "function": {
                 "name": "extraerApellidos",
-                "description": "Después de que al usuario se le pregunte cuales son sus apellidos y que este responda, se pasa su/s apellido/s para que se lo/s reserve",
+                "description": "Esta función extrae los apellidos del usuario en un string.",
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        "celular": {
+                        "apellidos": {
                             "type": "string",
-                            "description": "Número celular del usuario"
+                            "description": "Apellidos del usuario."
                         },
                     },
-                    "required": ["celular"]
+                    "required": ["apellidos"]
                 }
             }
         }
         ]
 
     available_functions = {
-                "extraerCelular":extraerApellidos
+                "extraerApellidos":extraerApellidos
             }
 
-    prompt = """Eres un experto en el agendamiento de citas, ahora tu único trabajo es preguntarle al usuario cual es su número celular. Bajo ninguna otra condición harás cualquier otra acción, considera que puede que recibas una conversación de antemano, evalúa esta conversación y únicamente enfócate en obtener el número de celular del usuario."""
-
+    prompt = """Eres un bot que ayuda en el proceso de agendamiento de citas por una aplicación de chats. Eres muy amable y eres experto en atención al cliente.
+    1. Tu único trabajo es preguntar al usuario cuales son sus apellidos. (e.g. 'Ayúdame con tus apellidos por favor.')
+    2. Debes verificar con cuidado si el usuario responde efectivmente a esta ultima pregunta, o si por otro lado, parece que se ha desviado en la conversación.
+    3. Si el usuario se desvía en la conversación debes insistir en preguntarle cuales son sus apellidos. 
+    4. Una vez que el usuario ha proporcionado sus apellidos llamas a la función extraerApellidos, lo cual hará que la conversación continue con el siguiente bot que le pedirá sus nombres.
+    5. No te dirijas al usuario por sus apellidos ya que esto es un poco grosero.
+    """
     return grafoChat(3, available_functions, lista_de_tools, None, prompt)

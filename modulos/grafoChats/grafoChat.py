@@ -74,7 +74,7 @@ class grafoChat:
                     function_response = function_to_call(
                         function_args.get(primer_parametro)
                     )
-                    print(function_response)
+                    print(type(function_response))
                     messages.append(
                         {
                             "tool_call_id": tool_call.id,

@@ -2,6 +2,9 @@ import modulos.idActual as idActual
 
 from modulos.grafoChats.usuarioEnDB_ID1 import getGrafoChatID1
 from modulos.grafoChats.extraerCelular_ID2 import getGrafoChatID2
+from modulos.grafoChats.extraerApellidos_ID3 import getGrafoChatID3
+from modulos.grafoChats.extraerNombres_ID4 import getGrafoChatID4
+from modulos.grafoChats.extraerEmail_ID5 import getGrafoChatID5
 
 
 from fastapi import FastAPI, HTTPException, Depends, Body
@@ -12,7 +15,7 @@ from fastapi.security import APIKeyHeader
 from typing import List
 import json
 
-grafoChats = {1:getGrafoChatID1(), 2:getGrafoChatID2()}
+grafoChats = {1:getGrafoChatID1(), 2:getGrafoChatID2(), 3:getGrafoChatID3(),4:getGrafoChatID4(), 5:getGrafoChatID5()}
 chatActual = grafoChats[1]
 idActual.global_id = 1
 
@@ -26,7 +29,7 @@ def traspaso():
 
 app = FastAPI()
 
-origins = ["http://127.0.0.1:5500"]  # Adjust as per your CORS needs
+origins = ["http://127.0.0.1:5501"]  # Adjust as per your CORS needs
 
 app.add_middleware(
     CORSMiddleware,
