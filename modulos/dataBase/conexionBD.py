@@ -6,7 +6,7 @@ def connectionBD():
     mydb = mysql.connector.connect(
         host ="localhost",
         user ="root",
-        passwd ="314159",
+        passwd ="0Kh6wZtpBSbguvnPf4zUELc@@@",
         database = "crud_clientes"
         )
     if mydb:

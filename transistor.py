@@ -5,7 +5,8 @@ from modulos.grafoChats.extraerCelular_ID2 import getGrafoChatID2
 from modulos.grafoChats.extraerApellidos_ID3 import getGrafoChatID3
 from modulos.grafoChats.extraerNombres_ID4 import getGrafoChatID4
 from modulos.grafoChats.extraerEmail_ID5 import getGrafoChatID5
-
+from modulos.grafoChats.inferirSexo_ID6 import getGrafoChatID6
+from modulos.grafoChats.policia_ID7 import getGrafoChatID7
 
 from fastapi import FastAPI, HTTPException, Depends, Body
 from pydantic import BaseModel
@@ -15,9 +16,13 @@ from fastapi.security import APIKeyHeader
 from typing import List
 import json
 
-grafoChats = {1:getGrafoChatID1(), 2:getGrafoChatID2(), 3:getGrafoChatID3(),4:getGrafoChatID4(), 5:getGrafoChatID5()}
+grafoChats = {1:getGrafoChatID1(), 2:getGrafoChatID2(), 3:getGrafoChatID3(),4:getGrafoChatID4(), 5:getGrafoChatID5(), 6:getGrafoChatID6(), 7:getGrafoChatID7()}
+policia = getGrafoChatID7()
+
 chatActual = grafoChats[1]
 idActual.global_id = 1
+
+chatsEscuchandoCorecciones = [3, 4, 5]
 
 def traspaso():
 
@@ -27,9 +32,17 @@ def traspaso():
     #print(lista_de_mensajes)
     #print(f"Traspaso a chat {idActual.global_id}")
 
+def vigilia():
+    global policia
+    print("Ejecución del Policía")
+    policia.update_lista_de_mensajes()
+    policia.run_conversation()
+
 app = FastAPI()
 
-origins = ["http://127.0.0.1:5501"]  # Adjust as per your CORS needs
+
+
+origins = ["http://127.0.0.1:5500"]  # Adjust as per your CORS needs
 
 app.add_middleware(
     CORSMiddleware,
@@ -73,9 +86,15 @@ class ChatInput(BaseModel):
 @app.post("/chatgpt")
 async def chat_with_gpt_extract_name(input_data: ChatInput, api_key: str = Depends(get_api_key)):
     global chatActual
-    
+    global chatsEscuchandoCorecciones
+
     formatted_messages = [{"role": msg.role, "content": msg.content} for msg in input_data.messages]
     idActual.global_msgs = formatted_messages
+    print(f"GLOBAL ID: {idActual.global_id}")
+
+    if idActual.global_id in chatsEscuchandoCorecciones and idActual.global_redirrecion == False:
+        idActual.global_idPrevio = idActual.global_id
+        vigilia()
     #print(formatted_messages)
     traspaso()
     return {"response": chatActual.run_conversation()}

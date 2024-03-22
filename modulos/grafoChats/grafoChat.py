@@ -1,16 +1,19 @@
 from openai import OpenAI
 import json
 import modulos.idActual as idActual
+import modulos.grafoChats.promptsDinamicas as promptsDinamicas
 
 grafoChats = {}
 class grafoChat:
-    def __init__(self, id, available_functions, lista_de_tools, lista_de_mensajes, prompt):
+    def __init__(self, id, available_functions, lista_de_tools, lista_de_mensajes, prompt, tienePromptDinamica=False, paralelo=False):
         global grafoChats 
         self.id = id
         self.available_functions = available_functions
         self.lista_de_tools = lista_de_tools
         self.lista_de_mensajes = lista_de_mensajes
         self.prompt = prompt
+        self.tienePromptDinamica = tienePromptDinamica
+        self.paralelo = paralelo
         grafoChats[id] = self
         
 
@@ -18,6 +21,9 @@ class grafoChat:
         lista_de_mensajes = idActual.global_msgs
         lista_de_mensajes_filtrada = []
 
+        if (self.tienePromptDinamica):
+            self.update_propmt(promptsDinamicas.getPromptDinamica(self.id))
+            
         validRoles = ["system", "user", "assistant"]
         for mensaje in lista_de_mensajes:
             # Acceder a los valores de cada clave en el diccionario
@@ -32,11 +38,12 @@ class grafoChat:
         self.lista_de_mensajes[0] = {"role":"system", "content":self.prompt}
 
 
-        
+    def update_propmt(self, nueva_prompt):
+        self.prompt = nueva_prompt
 
     def run_conversation(self):
     # Step 1: send the conversation and available functions to the model
-        if idActual.global_id != self.id:
+        if idActual.global_id != self.id and self.paralelo == False:
             print(f"DISONANCIA entre {idActual.global_id} y {self.id}")
             grafoChats[idActual.global_id].update_lista_de_mensajes()
             return grafoChats[idActual.global_id].run_conversation()
@@ -74,7 +81,7 @@ class grafoChat:
                     function_response = function_to_call(
                         function_args.get(primer_parametro)
                     )
-                    print(type(function_response))
+                    print(function_response)
                     messages.append(
                         {
                             "tool_call_id": tool_call.id,
@@ -87,7 +94,7 @@ class grafoChat:
                     model="gpt-3.5-turbo-0125",
                     messages=messages,
                 )  # get a new response from the model where it can see the function response
-                if idActual.global_id != self.id:
+                if idActual.global_id != self.id and self.paralelo == False:
                     return grafoChats[idActual.global_id].run_conversation()    
                 else:    
                     return second_response.choices[0].message.content #+ " acabo de anotar tu " + primer_parametro +  " en una variable: " + function_response

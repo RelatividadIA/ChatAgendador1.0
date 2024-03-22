@@ -1,7 +1,7 @@
 from random import sample
 from modulos.dataBase.conexionBD import *  #Importando conexion BD
 import json
-
+import modulos.dataBase.identificadorDB
 
 #Creando una funcion para obtener la lista de guardias.
 def listarDatos():
@@ -16,36 +16,63 @@ def listarDatos():
     conexion_MySQLdb.close() #cerrando conexion de la BD    
     return resultadoBusqueda
 
-def registrarEntrada(datos_cliente):       
-    conexion_MySQLdb = connectionBD()
-    cursor = conexion_MySQLdb.cursor(dictionary=True)
+def update_cliente_celular(celularJSONSTR):
+    mydb = connectionBD()
+    cursor = mydb.cursor()
+    celular_actual = modulos.dataBase.identificadorDB.celular
+    nuevoCelular = json.loads(celularJSONSTR)['celular']
+    
+    try:
+        # Preparamos la consulta SQL para actualizar el número de celular del cliente.
+        query = "UPDATE clientes SET celular = %s WHERE celular = %s"
+        values = (nuevoCelular, celular_actual)
+
+        # Ejecutamos la consulta SQL.
+        cursor.execute(query, values)
+
+        # Confirmamos los cambios en la base de datos.
+        mydb.commit()
+
+        print(f"Celular actualizado exitosamente a {nuevoCelular} para el cliente.")
+        modulos.dataBase.identificadorDB.celular = nuevoCelular
+        return
+    except mysql.connector.Error as error:
+        print(f"Error al actualizar el celular del cliente: {error}")
+    finally:
+        cursor.close()
+        mydb.close()
+
+def insertar_CelularCliente(json_str):
+    # Convierte el string JSON en un diccionario de Python.
+    data = json.loads(json_str)
+    
+    # Establece la conexión a la base de datos.
+    connection = connectionBD()
+    if connection is None:
+        print("No se pudo establecer la conexión a la base de datos.")
+        return
+    
+    try:
+        cursor = connection.cursor()
+        # Inserta una nueva entrada en la tabla `clientes`.
+        sql = "INSERT INTO `clientes` (`celular`) VALUES (%s)"
+        cursor.execute(sql, (data['celular'],))
         
-    # Crear la consulta SQL de inserción con todos los campos.
-    sql = """
-    INSERT INTO clientes(nombre, edad, sexo, teléfono, cedula, email) 
-    VALUES (%s, %s, %s, %s, %s, %s)
-    """
-    # Desempaquetar los valores del JSON para pasarlos como parámetros.
-    valores = (
-        datos_cliente.get('nombre', ''),
-        datos_cliente.get('edad', ''),
-        datos_cliente.get('sexo', ''),
-        datos_cliente.get('teléfono', ''),
-        datos_cliente.get('cedula', ''),
-        datos_cliente.get('email', '')
-    )
-    cursor.execute(sql, valores)
-    conexion_MySQLdb.commit()
+        # Confirma la transacción.
+        connection.commit()
+        
+        print("Cliente insertado exitosamente.")
+        
+        modulos.dataBase.identificadorDB.celular = data['celular']
+
+    except mysql.connector.Error as error:
+        print("Error al insertar el cliente: {}".format(error))
     
-    resultado_insert = cursor.rowcount # Retorna 1 o 0 si se insertó el registro.
-    ultimo_id = cursor.lastrowid # Retorna el ID del último registro insertado.
-    
-    cursor.close() # Cerrando conexión SQL
-    conexion_MySQLdb.close() # Cerrando conexión de la BD
-    print("Push exitoso")
-    print(listarDatos())
-    
-    return resultado_insert, ultimo_id
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("La conexión a la base de datos ha sido cerrada.")
 
 def verificarExistencia(data):
     # Asumir que 'data' es un diccionario con una sola clave-valor
@@ -77,3 +104,94 @@ def verificarExistencia(data):
         print(f"Error en la base de datos: {err}")
         return False
     
+def actualizar_cliente(json_str):
+    # Convierte el string JSON en un diccionario de Python.
+    data = json.loads(json_str)
+    propiedad = list(data.keys())[0]
+    valor = data[propiedad]
+
+    # Valida la propiedad a actualizar para asegurar que está permitida.
+    propiedades_permitidas = ['nombres', 'apellidos', 'edad', 'sexo', 'email']
+    if propiedad not in propiedades_permitidas:
+        print("Propiedad no permitida para actualización.")
+        return
+
+    # Usa la variable global `celular` para determinar la entrada a actualizar.
+    celular = modulos.dataBase.identificadorDB.celular
+
+    # Establece la conexión a la base de datos.
+    connection = connectionBD()
+    if connection is None:
+        print("No se pudo establecer la conexión a la base de datos.")
+        return
+
+    try:
+        cursor = connection.cursor()
+        # Prepara la consulta SQL para actualizar la propiedad dada.
+        sql = f"UPDATE `clientes` SET `{propiedad}` = %s WHERE `celular` = %s"
+        cursor.execute(sql, (valor, celular))
+        
+        # Confirma la transacción.
+        connection.commit()
+        
+        print(f"Cliente actualizado exitosamente: {propiedad} = {valor}.")
+
+    except mysql.connector.Error as error:
+        print(f"Error al actualizar el cliente: {error}")
+    
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("La conexión a la base de datos ha sido cerrada.")
+
+def obtener_valor_cliente(campo):
+    # Asumimos que el módulo y el objeto con el número de celular existen y lo importamos
+    celular = modulos.dataBase.identificadorDB.celular
+    
+    # Nos conectamos a la base de datos
+    mydb = connectionBD()
+    
+    # Creamos un cursor
+    cursor = mydb.cursor()
+    
+    # Construimos la consulta SQL
+    sql = f"SELECT {campo} FROM clientes WHERE celular = %s"
+    val = (celular,)
+    
+    # Ejecutamos la consulta
+    cursor.execute(sql, val)
+    
+    # Obtenemos el resultado
+    resultado = cursor.fetchone()
+    
+    # Cerramos el cursor y la conexión
+    cursor.close()
+    mydb.close()
+    
+    # Si hay un resultado, lo retornamos; si no, retornamos None
+    if resultado:
+        return resultado[0]
+    else:
+        return None
+    
+def obtener_datosJSON_cliente():
+    mydb = connectionBD()
+    if mydb is None:
+        return "No se pudo conectar a la base de datos."
+    
+    celular_cliente = modulos.dataBase.identificadorDB.celular  # Acceso a la variable global
+    
+    cursor = mydb.cursor(dictionary=True)  # Usar cursor como diccionario
+    query = "SELECT * FROM clientes WHERE celular = %s"
+    cursor.execute(query, (celular_cliente,))
+    
+    resultado = cursor.fetchone()
+    
+    cursor.close()
+    mydb.close()
+    
+    if resultado:
+        return resultado
+    else:
+        return "No se encontró al cliente."
