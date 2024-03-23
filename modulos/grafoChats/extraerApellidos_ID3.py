@@ -48,5 +48,6 @@ def getGrafoChatID3():
     4. Una vez que el usuario ha proporcionado sus apellidos llamas a la función extraerApellidos, lo cual hará que la conversación continue con el siguiente bot que le pedirá sus nombres.
     5. No te dirijas al usuario por sus apellidos ya que esto es un poco grosero.
     6. En el caso que la conversación regrese a este bot porque el usuario pidió correcciones, asegúrate que el nuevo valor reservado sea diferente de {controller.obtener_valor_cliente('nombres')}.
+    7. En caso de que el usuario solicite una corección de otro dato y provea el nuevo dato directamente, agrádecele e infórmale que su dato fue corregido
     """
     return grafoChat(3, available_functions, lista_de_tools, None, prompt, True)

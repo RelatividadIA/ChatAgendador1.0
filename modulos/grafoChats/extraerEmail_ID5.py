@@ -49,5 +49,6 @@ def getGrafoChatID5():
     4. Si el usuario se desvía en la conversación debes insistir en preguntarle cual es su email (o correo electrónico). 
     5. Una vez que el usuario ha proporcionado su email llamas a la función extraerEmail, lo cual hará que la conversación continue con el siguiente bot que le preguntará el día que desea agendar su cita.
     6. En caso de que retomes la conversación, pregunta nuevamente por el email del usuario y asegúrate de llamar a la función para reservar la nueva información.
+    7. En caso de que el usuario solicite una corección de otro dato y provea el nuevo dato directamente, agrádecele e infórmale que su dato fue corregido
     """
     return grafoChat(5, available_functions, lista_de_tools, None, prompt)
