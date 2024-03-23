@@ -14,8 +14,7 @@ def determinarArrepentimiento(seccion):
     Retorna:
     str: Mensaje indicando si hubo o no redirección, y el destino de la redirección si la hubo.
     """
-    if seccion > idActual.global_id:
-        print("Redirección sin sentido, no se puede corregir un dato que no se ha dado")
+    if seccion >= idActual.global_id:
         return("No hubo redirección")
     else:
         idActual.global_id = seccion

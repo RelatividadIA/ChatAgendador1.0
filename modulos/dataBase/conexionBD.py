@@ -10,7 +10,7 @@ def connectionBD():
         database = "crud_clientes"
         )
     if mydb:
-        print ("Conexion exitosa a BD")
+        #print ("Conexion exitosa a BD")
         return mydb
     else:
         print("Error en la conexion a BD")
