@@ -7,7 +7,7 @@ def extraerSexo(sexo):
     """Lee toda la conversación, infiere el sexo del usuario y lo coloca en formato json estándar"""
     
     controller.actualizar_cliente(json.dumps({"sexo": sexo}))
-    #idActual.global_id = 8
+    idActual.global_id = 9
     
     return json.dumps({"sexo": sexo})
 

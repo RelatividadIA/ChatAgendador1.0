@@ -8,7 +8,9 @@ def determinarBoolRespuestaDelUsuario(respuesta):
     print(respuesta+respuesta+respuesta+respuesta+respuesta)
     if (respuesta == False):
         idActual.global_id = 2
-    
+    else:
+        idActual.global_id = 8
+        
     return "True"
 
 

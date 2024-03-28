@@ -1,1 +1,3 @@
 celular  = ""
+fecha = ""
+hora = ""

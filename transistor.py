@@ -7,6 +7,9 @@ from modulos.grafoChats.extraerNombres_ID4 import getGrafoChatID4
 from modulos.grafoChats.extraerEmail_ID5 import getGrafoChatID5
 from modulos.grafoChats.inferirSexo_ID6 import getGrafoChatID6
 from modulos.grafoChats.policia_ID7 import getGrafoChatID7
+from modulos.grafoChats.identificarCelular_ID8 import getGrafoChatID8
+from modulos.grafoChats.extraerFecha_ID9 import getGrafoChatID9
+from modulos.grafoChats.extraerHora_ID11 import getGrafoChatID11
 
 from fastapi import FastAPI, HTTPException, Depends, Body
 from pydantic import BaseModel
@@ -16,7 +19,7 @@ from fastapi.security import APIKeyHeader
 from typing import List
 import json
 
-grafoChats = {1:getGrafoChatID1(), 2:getGrafoChatID2(), 3:getGrafoChatID3(),4:getGrafoChatID4(), 5:getGrafoChatID5(), 6:getGrafoChatID6(), 7:getGrafoChatID7()}
+grafoChats = {1:getGrafoChatID1(), 2:getGrafoChatID2(), 3:getGrafoChatID3(),4:getGrafoChatID4(), 5:getGrafoChatID5(), 6:getGrafoChatID6(), 7:getGrafoChatID7(), 8:getGrafoChatID8(), 9:getGrafoChatID9(), 11:getGrafoChatID11()}
 policia = getGrafoChatID7()
 
 chatActual = grafoChats[1]
